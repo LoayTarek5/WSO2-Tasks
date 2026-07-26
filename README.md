@@ -167,26 +167,29 @@ loayelnoamani@pop-os:~/wso2-export$ tail -20 ~/wso2am-4.7.0/repository/logs/api.
 loayelnoamani@pop-os:~/wso2-export$
 ```
 
-I generated a mix of API traffic against /petstore/1.0.0 and inspected the
-gateway logs in wso2am-4.7.0/repository/logs/.
+## Task 10 — Analytics & Logs Summary
 
-**Where invocations are logged**
-- http_access_*.log — servlet-transport access log (internal metadata calls)
-- wso2carbon.log — operational log; records gateway auth/authorization
-  outcomes for each invocation
-- wso2-apigw-service.log — PassThrough gateway service log
+I enabled per-API FULL logging on the Petstore API (1.0.0) using apictl:
 
-**What the logs showed** (fields identified per entry):
-- Request path:   requestURI=/petstore/1.0.0/pet/findByStatus (and /pet/fakepath123)
-- Response outcome: "Missing Credentials" (401) for calls sent without a token;
-                    "does not allow you to access the requested resource" (403)
-                    for calls to unauthorized/unknown resources
-- Invocation time: e.g. 2026-07-26 18:46:15,557
+    apictl set api-logging --api-id <API-UUID> --log-level FULL -e local -k
 
-**Observations**
-- Every rejected call was logged with a clear reason, showing the gateway
-  enforces authentication and authorization before reaching the backend.
-- Successful (200) calls are not logged at WARN level; per-API logging can be
-  enabled to capture all requests with status codes and latency.
-- The logs confirm the security behavior tested in Tasks 3–4: no token → 401,
-  wrong resource/scope → 403.
+Per-API logs are written to repository/logs/api.log as JSON, one entry per
+REQUEST_IN and RESPONSE_OUT, capturing the fields the task asks for:
+
+- Request path:    "apiTo":"/petstore/1.0.0/pet/findByStatus?status=available"
+- HTTP method:     "verb":"GET"
+- Response status: "statusCode":403 / 401
+- Invocation time: [2026-07-26 18:57:09,447]
+- Correlation ID:  links each request to its response
+
+Observed outcomes from my test traffic:
+- 403 (900910, "Scope validation failed") — token lacked the resource scope
+- 401 (900902, "Missing Credentials")     — call sent without a token
+
+Where invocations are logged (three complementary logs):
+- api.log             — per-API FULL logs (enabled via apictl); richest, per-request
+- wso2carbon.log      — operational log; auth/authz failures at WARN
+- http_access_*.log   — servlet-transport access log (internal metadata calls)
+
+Note: per-API logging is disabled by default for performance and enabled
+on demand per API — a lightweight alternative to full analytics.
