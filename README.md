@@ -101,3 +101,53 @@ loayelnoamani@pop-os:~$
 ## Task 9
 <img width="1072" height="286" alt="image" src="https://github.com/user-attachments/assets/c7cd4a42-7ce5-405e-980b-5dc6993c4bc7" />
 <img width="1134" height="589" alt="image" src="https://github.com/user-attachments/assets/0a00a6d0-7da1-42a8-83fa-c817f8473f2b" />
+
+## Task 10
+loayelnoamani@pop-os:~/wso2-export$ grep "findByStatus\|fakepath\|/pet/" ~/wso2am-4.7.0/repository/logs/wso2-apigw-service.log | tail -20
+2026-07-26T18:35:08,455 [-] [PassThroughMessageProcessor-1]  INFO __SynapseService STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /petstore/1.0.0/pet/findByStatus?status=available, HEALTH CHECK URL = /petstore/1.0.0/pet/findByStatus?status=available
+loayelnoamani@pop-os:~/wso2-export$ grep "petstore/1.0.0/pet" ~/wso2am-4.7.0/repository/logs/wso2carbon.log | tail -20
+TID: [] [] [2026-07-26 15:27:30,869]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=DefaultApplication for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 15:27:30,887]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=DefaultApplication for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 15:27:30,903]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=DefaultApplication for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 15:27:30,919]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=DefaultApplication for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 15:27:30,935]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=DefaultApplication for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 15:27:30,952]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=DefaultApplication for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 15:27:30,968]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=DefaultApplication for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 15:27:30,984]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=DefaultApplication for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 15:27:31,000]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=DefaultApplication for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 15:27:31,017]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=DefaultApplication for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 15:27:31,033]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=DefaultApplication for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 15:27:31,049]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=DefaultApplication for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 15:28:39,475]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=DefaultApplication for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 15:29:47,453]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=DefaultApplication for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 15:39:41,509]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=DefaultApplication for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 15:40:40,960]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=DefaultApplication for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 16:02:13,540]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to Missing Credentials for requestURI=/petstore/1.0.0/pet/findByStatus
+TID: [] [] [2026-07-26 18:35:08,455]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /petstore/1.0.0/pet/findByStatus?status=available, HEALTH CHECK URL = /petstore/1.0.0/pet/findByStatus?status=available
+TID: [] [] [2026-07-26 18:46:02,828]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=LoayTestApp for requestURI=/petstore/1.0.0/pet/fakepath123
+TID: [] [] [2026-07-26 18:46:15,557]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to Missing Credentials for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
+loayelnoamani@pop-os:~/wso2-export$
+
+I generated a mix of API traffic against /petstore/1.0.0 and inspected the
+gateway logs in wso2am-4.7.0/repository/logs/.
+
+**Where invocations are logged**
+- http_access_*.log — servlet-transport access log (internal metadata calls)
+- wso2carbon.log — operational log; records gateway auth/authorization
+  outcomes for each invocation
+- wso2-apigw-service.log — PassThrough gateway service log
+
+**What the logs showed** (fields identified per entry):
+- Request path:   requestURI=/petstore/1.0.0/pet/findByStatus (and /pet/fakepath123)
+- Response outcome: "Missing Credentials" (401) for calls sent without a token;
+                    "does not allow you to access the requested resource" (403)
+                    for calls to unauthorized/unknown resources
+- Invocation time: e.g. 2026-07-26 18:46:15,557
+
+**Observations**
+- Every rejected call was logged with a clear reason, showing the gateway
+  enforces authentication and authorization before reaching the backend.
+- Successful (200) calls are not logged at WARN level; per-API logging can be
+  enabled to capture all requests with status codes and latency.
+- The logs confirm the security behavior tested in Tasks 3–4: no token → 401,
+  wrong resource/scope → 403.
