@@ -83,3 +83,6 @@ curl -k -s -o /dev/null -w "%{http_code}\n" "https://localhost:8243/petstore/2.0
 loayelnoamani@pop-os:~$
 
 ## Task 6
+<img width="1312" height="1533" alt="image" src="https://github.com/user-attachments/assets/20e7ff6a-488f-47ef-acff-2b9d212177eb" />
+
+<img width="1327" height="697" alt="image" src="https://github.com/user-attachments/assets/076d2bec-27c9-41b8-a27a-6a8b42349fc9" />
