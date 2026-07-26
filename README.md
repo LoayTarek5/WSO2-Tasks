@@ -1,6 +1,26 @@
+# WSO2-Tasks
+
+A hands-on walkthrough of the WSO2 API Manager 4.7.0 platform, completing ten tasks that cover the full API lifecycle — from creating and securing an API to versioning, rate limiting, import/export automation, and observability.
+ 
+The backend used throughout is the public **Swagger Petstore** (`https://petstore3.swagger.io/api/v3`). WSO2 API Manager sits *in front of* this backend as a managed gateway, adding OAuth2 security, rate limiting, versioning, documentation, and analytics — **without changing a single line of the backend's code**. That separation is the core idea an API gateway demonstrates, and every task below is a facet of it.
+ 
+**Environment:** WSO2 API Manager 4.7.0 · apictl 4.7.1 · JDK 21 · Pop!_OS
+ 
+The three consoles used, each mapping to a role:
+- **Publisher** (`:9443/publisher`) — where API *producers* create, configure, and publish APIs
+- **Developer Portal** (`:9443/devportal`) — where *consumers* discover, subscribe, and get keys
+- **Admin** (`:9443/admin`) — platform governance: throttling policies, key managers
+A recurring detail across the CLI tests: `-k` tells `curl`/`apictl` to accept WSO2's self-signed certificate, and the gateway runs two ports — `:9443` (OAuth token endpoint) and `:8243` (the API gateway that serves invocations).
+ 
+---
+
 <img width="1329" height="471" alt="image" src="https://github.com/user-attachments/assets/b7b02b01-7017-4801-b052-2a4b334ccec4" /># WSO2-Tasks
 
 ## Task 1
+Created an API by importing the Petstore OpenAPI definition (reusing the existing contract rather than hand-defining every endpoint), set its identity (name, context `/petstore`, version `1.0.0`), and pointed it at the backend. Then walked the lifecycle: **CREATED → deploy a revision to the gateway → PUBLISHED**. Only a published, deployed API is reachable by consumers. Verified end-to-end by obtaining an OAuth2 token and calling the API for a `200` with live pet data.
+ 
+*Debugging note:* the full security chain revealed itself as a sequence of errors — `NetworkError` until the gateway's self-signed cert was trusted, `invalid_client` from a lookalike-character typo in the consumer key (`I`/`l`/`i`), and `900910` scope failure until the application was subscribed to the API. Each error maps to a distinct gate: cert trust → valid token → active subscription.
+
 <img width="825" height="674" alt="image" src="https://github.com/user-attachments/assets/2864306d-ef7b-4301-adb8-d93c13aba69f" />
 
 <img width="1314" height="699" alt="image" src="https://github.com/user-attachments/assets/6f8a1c4f-14ff-491e-9b41-686278e1ff83" />
@@ -14,13 +34,13 @@
 <img width="1312" height="4253" alt="image" src="https://github.com/user-attachments/assets/ec7c9861-7dd0-458a-b00e-8f1f9795479a" />
 
 ## Task 2
-
+Added a resource to the API and redeployed a new revision. A **resource** is an HTTP method + URI pattern, and it defines *what the gateway will route*. Proved the concept with a clean contrast: a call to the newly-added path returned a **400 from the backend** (gateway forwarded it, backend rejected the value), while a call to a genuinely unknown path returned a **404 from the gateway** ("No matching resource"). Same-looking failures, different sources — that difference *is* what adding a resource controls. The redeploy-a-new-revision step is what makes any change live; editing the design alone changes nothing on the gateway.
 <img width="1168" height="486" alt="image" src="https://github.com/user-attachments/assets/e1459b85-db10-4580-a24a-471a2326d3a0" />
 
 <img width="1203" height="607" alt="image" src="https://github.com/user-attachments/assets/9ee0fd74-f90f-4b69-a09c-debe2d301034" />
 
 ## Task 3
-
+Confirmed OAuth2 as the API's application-level security (Publisher → Runtime Configurations) and verified the full security guarantee from both sides: a valid, subscribed token returns `200`; a request with **no token** is rejected at the gateway with `401 / 900902 Missing Credentials`, never reaching the backend. This makes concrete the three-object model — **API** (declares security), **Application** (holds credentials), **Subscription** (the required link between them) — and the OAuth2 client-credentials flow (key + secret → token → `Authorization: Bearer`). The gateway also returns a `WWW-Authenticate` header telling callers *how* to authenticate.
 <img width="1084" height="1120" alt="image" src="https://github.com/user-attachments/assets/b148f0d3-27c0-4d9f-a4e1-be072696bd85" />
 ```console 
 curl -k -i -X GET "https://localhost:8243/petstore/1.0.0/pet/findByStatus?status=available"
@@ -34,6 +54,10 @@ Transfer-Encoding: chunked
 {"code":"900902","message":"Missing Credentials","description":"Invalid Credentials. Make sure your API invocation call has a header: 'Authorization : Bearer ACCESS_TOKEN' or 'Authorization : Basic ACCESS_TOKEN' or 'ApiKey : API_KEY'"}loayelnoamani@pop-os:~$
 ```
 ## Task 4
+Created a custom `10PerMin` subscription policy in the Admin Portal, attached it to the API's Business Plans (Publisher), and selected it when subscribing (Dev Portal) — three consoles, three roles. Then fired 15 requests in a loop and watched the gateway flip from `200` to **`429 Too Many Requests`** once the per-minute allowance was spent. Throttling is a protective valve: once exceeded, the gateway stops forwarding to the backend.
+ 
+*Debugging note:* a valid, subscribed token was still rejected with `900910`. Decoding the JWT payload showed `"scope":"default"` instead of the `read:pets write:pets` the pet resources required — the resource-level scopes (inherited from the OpenAPI import) were blocking a client-credentials token. Since the task's security model is OAuth2 + subscription rather than fine-grained per-scope access, removing the resource scopes was the correct, simplest fix — after which the throttling test produced the expected `200 → 429` transition.
+
 <img width="1281" height="150" alt="image" src="https://github.com/user-attachments/assets/fd190d2a-1067-4277-855f-43ef1f8ca3a1" />
 
 <img width="1329" height="471" alt="image" src="https://github.com/user-attachments/assets/4c8947c2-5089-4d3a-9f05-14ed9fbb3ab7" />
@@ -70,6 +94,7 @@ Request 15 -> 429
 loayelnoamani@pop-os:~$
 ```
 ## Task 5
+Cloned `1.0.0` into a new, independent `2.0.0` (carrying all config forward), then deployed and published it alongside the original. Verified both versions respond independently — the only difference between the two working calls being `1.0.0` vs `2.0.0` in the gateway path. Because each version is a separate object, they're subscribed to independently; but a single token from one application authorized **both**, since a token belongs to the application, not the API. This is how APIs evolve without breaking existing consumers: old and new run side by side.
 <img width="1327" height="697" alt="image" src="https://github.com/user-attachments/assets/e7893125-cdd6-4441-a505-98c03c5bceb4" />
 <img width="1327" height="697" alt="image" src="https://github.com/user-attachments/assets/d1fcc282-cdbb-4e8e-86a0-7a5b4be343b3" />
 https://localhost:8243/petstore/1.0.0/pet/findByStatus
@@ -92,26 +117,37 @@ curl -k -s -o /dev/null -w "%{http_code}\n" "https://localhost:8243/petstore/2.0
 loayelnoamani@pop-os:~$
 ```
 ## Task 6
+Updated the consumer-facing metadata: a clear description (framing the API as a *managed proxy* rather than the raw Petstore), tags for discoverability, an uploaded icon, and business-owner/technical-owner contact info. Metadata is catalog/display information (not gateway routing), so it surfaces in the Developer Portal on save without a redeploy. Good metadata is the difference between an API that looks maintained and one consumers pass over.
 <img width="1312" height="1533" alt="image" src="https://github.com/user-attachments/assets/20e7ff6a-488f-47ef-acff-2b9d212177eb" />
 
 <img width="1327" height="697" alt="image" src="https://github.com/user-attachments/assets/076d2bec-27c9-41b8-a27a-6a8b42349fc9" />
 
 # Task 7
+Stepped fully into the consumer's role: created a **new** application (`LoayTestApp`), subscribed it to two APIs (versions `1.0.0` and `2.0.0`), generated its own **production** keys, and tested both — all `200`. Because this is a second, independent application, it has entirely different credentials from `DefaultApplication` — reinforcing that keys belong to the application. One app, many APIs, one token authorizing all of them.
+ 
+
 <img width="1272" height="70" alt="image" src="https://github.com/user-attachments/assets/c775695f-6220-412d-b2ca-5aa7c00c1337" />
 
 <img width="876" height="497" alt="image" src="https://github.com/user-attachments/assets/71e034f4-cfe4-45fc-927f-fe4793e61864" />
 
 ## Task 8
+ 
+Used the WSO2 API Controller (`apictl`) to run the professional dev-first workflow: **export → delete → import → verify**. Exported `1.0.0` as a portable "API source project" (a zip containing the OpenAPI definition, WSO2 config, icon, and metadata), deleted it from the server, then re-imported it from the zip and confirmed it came back fully intact and serving traffic (`200`). This is how APIs move between environments (dev → staging → prod) and get version-controlled in Git.
+ 
+*Debugging notes:* two real-world issues surfaced. First, `apictl 4.0.5` returned empty API lists and `404`s — verbose mode showed it calling the `v2` Publisher REST endpoint, which the `4.7.0` server doesn't expose; matching the tool to the server (`apictl 4.7.1`, hitting `v4`) fixed it. Second, deleting the API failed with `409 Conflict` — "active subscriptions exist" — because WSO2 refuses to orphan active consumers. Removing the subscriptions first allowed the delete. The re-imported API also received a *new* internal UUID while keeping its consumer-facing identity (`/petstore/1.0.0`) unchanged — the import is a faithful restore of the artifact, not the database row.
+
 <img width="882" height="192" alt="image" src="https://github.com/user-attachments/assets/4f0d0851-6426-4673-8836-01a9d054d9be" />
 
 <img width="854" height="231" alt="image" src="https://github.com/user-attachments/assets/ad549c00-6697-40f4-80fe-6e78dd6b673f" />
 <img width="834" height="150" alt="image" src="https://github.com/user-attachments/assets/84455b81-f6a9-42c0-8fb7-d5e9cc0ceecf" />
 
 ## Task 9
+Authored an inline "Getting Started" document on the API (Publisher → Documents) — an authentication how-to plus a worked example of the `GET /pet/findByStatus` endpoint with sample requests — and verified it renders on the consumer-facing Developer Portal. Documentation is content authored by the producer to help consumers adopt the API; it publishes with the API and needs no separate lifecycle step.
 <img width="1072" height="286" alt="image" src="https://github.com/user-attachments/assets/c7cd4a42-7ce5-405e-980b-5dc6993c4bc7" />
 <img width="1134" height="589" alt="image" src="https://github.com/user-attachments/assets/0a00a6d0-7da1-42a8-83fa-c817f8473f2b" />
 
 ## Task 10
+Generated a mix of API traffic (successes, unknown-path calls, and a no-token call) and inspected the gateway logs. The default `wso2carbon.log` records auth/authorization *failures* at WARN with the request path, outcome reason, and timestamp. For complete per-request observability, enabled **per-API FULL logging** via apictl — without restarting the server:
 ```console 
 loayelnoamani@pop-os:~/wso2-export$ grep "findByStatus\|fakepath\|/pet/" ~/wso2am-4.7.0/repository/logs/wso2-apigw-service.log | tail -20
 2026-07-26T18:35:08,455 [-] [PassThroughMessageProcessor-1]  INFO __SynapseService STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /petstore/1.0.0/pet/findByStatus?status=available, HEALTH CHECK URL = /petstore/1.0.0/pet/findByStatus?status=available
