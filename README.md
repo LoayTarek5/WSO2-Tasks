@@ -36,22 +36,17 @@ Transfer-Encoding: chunked
 
 <img width="1329" height="471" alt="image" src="https://github.com/user-attachments/assets/4c8947c2-5089-4d3a-9f05-14ed9fbb3ab7" />
 <img width="1329" height="471" alt="image" src="https://github.com/user-attachments/assets/6528178b-7d6f-40d4-b628-710777324c5a" />
-```
 loayelnoamani@pop-os:~$ TOKEN=$(curl -k -s -X POST https://localhost:9443/oauth2/token -d "grant_type=client_credentials" -u "$CONSUMER_KEY:$CONSUMER_SECRET" | grep -o '"access_token":"[^"]*"' | cut -d'"' -f4)
-```
-```
+
+
 loayelnoamani@pop-os:~$ curl -k -s -o /dev/null -w "%{http_code}\n" "https://localhost:8243/petstore/1.0.0/pet/findByStatus?status=available" -H "Authorization: Bearer $TOKEN"
-```
 200
-```
 loayelnoamani@pop-os:~$ for i in $(seq 1 15); do
   code=$(curl -k -s -o /dev/null -w "%{http_code}" \
     "https://localhost:8243/petstore/1.0.0/pet/findByStatus?status=available" \
     -H "Authorization: Bearer $TOKEN")
   echo "Request $i -> $code"
 done
-```
-```
 Request 1 -> 200
 Request 2 -> 200
 Request 3 -> 200
@@ -68,4 +63,23 @@ Request 13 -> 429
 Request 14 -> 429
 Request 15 -> 429
 loayelnoamani@pop-os:~$
-```
+
+## Task 5
+<img width="1327" height="697" alt="image" src="https://github.com/user-attachments/assets/e7893125-cdd6-4441-a505-98c03c5bceb4" />
+<img width="1327" height="697" alt="image" src="https://github.com/user-attachments/assets/d1fcc282-cdbb-4e8e-86a0-7a5b4be343b3" />
+https://localhost:8243/petstore/1.0.0/pet/findByStatus
+https://localhost:8243/petstore/2.0.0/pet/findByStatus
+same output
+
+loayelnoamani@pop-os:~$ TOKEN=$(curl -k -s -X POST https://localhost:9443/oauth2/token -d "grant_type=client_credentials" -u "$CONSUMER_KEY:$CONSUMER_SECRET" | grep -o '"access_token":"[^"]*"' | cut -d'"' -f4)
+loayelnoamani@pop-os:~$ echo "--- v1.0.0 ---"
+curl -k -s -o /dev/null -w "%{http_code}\n" "https://localhost:8243/petstore/1.0.0/pet/findByStatus?status=available" -H "Authorization: Bearer $TOKEN"
+--- v1.0.0 ---
+200
+loayelnoamani@pop-os:~$ echo "--- v2.0.0 ---"
+curl -k -s -o /dev/null -w "%{http_code}\n" "https://localhost:8243/petstore/2.0.0/pet/findByStatus?status=available" -H "Authorization: Bearer $TOKEN"
+--- v2.0.0 ---
+200
+loayelnoamani@pop-os:~$
+
+## Task 6
