@@ -11,11 +11,8 @@ The three consoles used, each mapping to a role:
 - **Developer Portal** (`:9443/devportal`) — where *consumers* discover, subscribe, and get keys
 - **Admin** (`:9443/admin`) — platform governance: throttling policies, key managers
 A recurring detail across the CLI tests: `-k` tells `curl`/`apictl` to accept WSO2's self-signed certificate, and the gateway runs two ports — `:9443` (OAuth token endpoint) and `:8243` (the API gateway that serves invocations).
- 
+<img width="1329" height="471" alt="image" src="https://github.com/user-attachments/assets/b7b02b01-7017-4801-b052-2a4b334ccec4" />
 ---
-
-<img width="1329" height="471" alt="image" src="https://github.com/user-attachments/assets/b7b02b01-7017-4801-b052-2a4b334ccec4" /># WSO2-Tasks
-
 ## Task 1
 Created an API by importing the Petstore OpenAPI definition (reusing the existing contract rather than hand-defining every endpoint), set its identity (name, context `/petstore`, version `1.0.0`), and pointed it at the backend. Then walked the lifecycle: **CREATED → deploy a revision to the gateway → PUBLISHED**. Only a published, deployed API is reachable by consumers. Verified end-to-end by obtaining an OAuth2 token and calling the API for a `200` with live pet data.
  
