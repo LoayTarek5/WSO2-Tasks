@@ -20,7 +20,7 @@
 ## Task 3
 
 <img width="1084" height="1120" alt="image" src="https://github.com/user-attachments/assets/b148f0d3-27c0-4d9f-a4e1-be072696bd85" />
-
+```console 
 curl -k -i -X GET "https://localhost:8243/petstore/1.0.0/pet/findByStatus?status=available"
 HTTP/1.1 401 Unauthorized
 activityid: 622760a6-afd5-4f90-8b2e-f7eb10f3f9be
@@ -30,12 +30,13 @@ Content-Type: application/json; charset=UTF-8
 Date: Sun, 26 Jul 2026 09:53:41 GMT
 Transfer-Encoding: chunked
 {"code":"900902","message":"Missing Credentials","description":"Invalid Credentials. Make sure your API invocation call has a header: 'Authorization : Bearer ACCESS_TOKEN' or 'Authorization : Basic ACCESS_TOKEN' or 'ApiKey : API_KEY'"}loayelnoamani@pop-os:~$
-
+```
 ## Task 4
 <img width="1281" height="150" alt="image" src="https://github.com/user-attachments/assets/fd190d2a-1067-4277-855f-43ef1f8ca3a1" />
 
 <img width="1329" height="471" alt="image" src="https://github.com/user-attachments/assets/4c8947c2-5089-4d3a-9f05-14ed9fbb3ab7" />
 <img width="1329" height="471" alt="image" src="https://github.com/user-attachments/assets/6528178b-7d6f-40d4-b628-710777324c5a" />
+```console 
 loayelnoamani@pop-os:~$ TOKEN=$(curl -k -s -X POST https://localhost:9443/oauth2/token -d "grant_type=client_credentials" -u "$CONSUMER_KEY:$CONSUMER_SECRET" | grep -o '"access_token":"[^"]*"' | cut -d'"' -f4)
 
 
@@ -63,14 +64,14 @@ Request 13 -> 429
 Request 14 -> 429
 Request 15 -> 429
 loayelnoamani@pop-os:~$
-
+```
 ## Task 5
 <img width="1327" height="697" alt="image" src="https://github.com/user-attachments/assets/e7893125-cdd6-4441-a505-98c03c5bceb4" />
 <img width="1327" height="697" alt="image" src="https://github.com/user-attachments/assets/d1fcc282-cdbb-4e8e-86a0-7a5b4be343b3" />
 https://localhost:8243/petstore/1.0.0/pet/findByStatus
 https://localhost:8243/petstore/2.0.0/pet/findByStatus
 same output
-
+```console 
 loayelnoamani@pop-os:~$ TOKEN=$(curl -k -s -X POST https://localhost:9443/oauth2/token -d "grant_type=client_credentials" -u "$CONSUMER_KEY:$CONSUMER_SECRET" | grep -o '"access_token":"[^"]*"' | cut -d'"' -f4)
 loayelnoamani@pop-os:~$ echo "--- v1.0.0 ---"
 curl -k -s -o /dev/null -w "%{http_code}\n" "https://localhost:8243/petstore/1.0.0/pet/findByStatus?status=available" -H "Authorization: Bearer $TOKEN"
@@ -81,7 +82,7 @@ curl -k -s -o /dev/null -w "%{http_code}\n" "https://localhost:8243/petstore/2.0
 --- v2.0.0 ---
 200
 loayelnoamani@pop-os:~$
-
+```
 ## Task 6
 <img width="1312" height="1533" alt="image" src="https://github.com/user-attachments/assets/20e7ff6a-488f-47ef-acff-2b9d212177eb" />
 
@@ -103,6 +104,7 @@ loayelnoamani@pop-os:~$
 <img width="1134" height="589" alt="image" src="https://github.com/user-attachments/assets/0a00a6d0-7da1-42a8-83fa-c817f8473f2b" />
 
 ## Task 10
+```console 
 loayelnoamani@pop-os:~/wso2-export$ grep "findByStatus\|fakepath\|/pet/" ~/wso2am-4.7.0/repository/logs/wso2-apigw-service.log | tail -20
 2026-07-26T18:35:08,455 [-] [PassThroughMessageProcessor-1]  INFO __SynapseService STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /petstore/1.0.0/pet/findByStatus?status=available, HEALTH CHECK URL = /petstore/1.0.0/pet/findByStatus?status=available
 loayelnoamani@pop-os:~/wso2-export$ grep "petstore/1.0.0/pet" ~/wso2am-4.7.0/repository/logs/wso2carbon.log | tail -20
@@ -127,7 +129,7 @@ TID: [] [] [2026-07-26 18:35:08,455]  INFO {org.apache.synapse.mediators.builtin
 TID: [] [] [2026-07-26 18:46:02,828]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to The access token does not allow you to access the requested resource for appName=LoayTestApp for requestURI=/petstore/1.0.0/pet/fakepath123
 TID: [] [] [2026-07-26 18:46:15,557]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to Missing Credentials for requestURI=/petstore/1.0.0/pet/findByStatus?status=available
 loayelnoamani@pop-os:~/wso2-export$
-
+```
 I generated a mix of API traffic against /petstore/1.0.0 and inspected the
 gateway logs in wso2am-4.7.0/repository/logs/.
 
