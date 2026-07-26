@@ -40,6 +40,7 @@ Added a resource to the API and redeployed a new revision. A **resource** is an 
 Confirmed OAuth2 as the API's application-level security (Publisher → Runtime Configurations) and verified the full security guarantee from both sides: a valid, subscribed token returns `200`; a request with **no token** is rejected at the gateway with `401 / 900902 Missing Credentials`, never reaching the backend. This makes concrete the three-object model — **API** (declares security), **Application** (holds credentials), **Subscription** (the required link between them) — and the OAuth2 client-credentials flow (key + secret → token → `Authorization: Bearer`). The gateway also returns a `WWW-Authenticate` header telling callers *how* to authenticate.
 <img width="1084" height="1120" alt="image" src="https://github.com/user-attachments/assets/b148f0d3-27c0-4d9f-a4e1-be072696bd85" />
 ```console 
+
 curl -k -i -X GET "https://localhost:8243/petstore/1.0.0/pet/findByStatus?status=available"
 HTTP/1.1 401 Unauthorized
 activityid: 622760a6-afd5-4f90-8b2e-f7eb10f3f9be
@@ -63,10 +64,12 @@ Created a custom `10PerMin` subscription policy in the Admin Portal, attached it
 loayelnoamani@pop-os:~$ TOKEN=$(curl -k -s -X POST https://localhost:9443/oauth2/token -d "grant_type=client_credentials" -u "$CONSUMER_KEY:$CONSUMER_SECRET" | grep -o '"access_token":"[^"]*"' | cut -d'"' -f4)
 ```
 ```console
+
 loayelnoamani@pop-os:~$ curl -k -s -o /dev/null -w "%{http_code}\n" "https://localhost:8243/petstore/1.0.0/pet/findByStatus?status=available" -H "Authorization: Bearer $TOKEN"
 200
 ```
 ```console
+
 loayelnoamani@pop-os:~$ for i in $(seq 1 15); do
   code=$(curl -k -s -o /dev/null -w "%{http_code}" \
     "https://localhost:8243/petstore/1.0.0/pet/findByStatus?status=available" \
@@ -98,15 +101,18 @@ https://localhost:8243/petstore/1.0.0/pet/findByStatus
 https://localhost:8243/petstore/2.0.0/pet/findByStatus
 same output
 ```console
+
 loayelnoamani@pop-os:~$ TOKEN=$(curl -k -s -X POST https://localhost:9443/oauth2/token -d "grant_type=client_credentials" -u "$CONSUMER_KEY:$CONSUMER_SECRET" | grep -o '"access_token":"[^"]*"' | cut -d'"' -f4)
 ```
 ```console
+
 loayelnoamani@pop-os:~$ echo "--- v1.0.0 ---"
 curl -k -s -o /dev/null -w "%{http_code}\n" "https://localhost:8243/petstore/1.0.0/pet/findByStatus?status=available" -H "Authorization: Bearer $TOKEN"
 --- v1.0.0 ---
 200
 ```
 ```console
+
 loayelnoamani@pop-os:~$ echo "--- v2.0.0 ---"
 curl -k -s -o /dev/null -w "%{http_code}\n" "https://localhost:8243/petstore/2.0.0/pet/findByStatus?status=available" -H "Authorization: Bearer $TOKEN"
 --- v2.0.0 ---
