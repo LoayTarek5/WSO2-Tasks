@@ -91,3 +91,9 @@ loayelnoamani@pop-os:~$
 <img width="1272" height="70" alt="image" src="https://github.com/user-attachments/assets/c775695f-6220-412d-b2ca-5aa7c00c1337" />
 
 <img width="876" height="497" alt="image" src="https://github.com/user-attachments/assets/71e034f4-cfe4-45fc-927f-fe4793e61864" />
+
+## Task 8
+<img width="882" height="192" alt="image" src="https://github.com/user-attachments/assets/4f0d0851-6426-4673-8836-01a9d054d9be" />
+
+<img width="854" height="231" alt="image" src="https://github.com/user-attachments/assets/ad549c00-6697-40f4-80fe-6e78dd6b673f" />
+<img width="834" height="150" alt="image" src="https://github.com/user-attachments/assets/84455b81-f6a9-42c0-8fb7-d5e9cc0ceecf" />
