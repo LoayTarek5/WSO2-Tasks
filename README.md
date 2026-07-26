@@ -36,12 +36,14 @@ Transfer-Encoding: chunked
 
 <img width="1329" height="471" alt="image" src="https://github.com/user-attachments/assets/4c8947c2-5089-4d3a-9f05-14ed9fbb3ab7" />
 <img width="1329" height="471" alt="image" src="https://github.com/user-attachments/assets/6528178b-7d6f-40d4-b628-710777324c5a" />
-```console 
+```console
 loayelnoamani@pop-os:~$ TOKEN=$(curl -k -s -X POST https://localhost:9443/oauth2/token -d "grant_type=client_credentials" -u "$CONSUMER_KEY:$CONSUMER_SECRET" | grep -o '"access_token":"[^"]*"' | cut -d'"' -f4)
-
-
+```
+```console
 loayelnoamani@pop-os:~$ curl -k -s -o /dev/null -w "%{http_code}\n" "https://localhost:8243/petstore/1.0.0/pet/findByStatus?status=available" -H "Authorization: Bearer $TOKEN"
 200
+```
+```console
 loayelnoamani@pop-os:~$ for i in $(seq 1 15); do
   code=$(curl -k -s -o /dev/null -w "%{http_code}" \
     "https://localhost:8243/petstore/1.0.0/pet/findByStatus?status=available" \
@@ -71,12 +73,16 @@ loayelnoamani@pop-os:~$
 https://localhost:8243/petstore/1.0.0/pet/findByStatus
 https://localhost:8243/petstore/2.0.0/pet/findByStatus
 same output
-```console 
+```console
 loayelnoamani@pop-os:~$ TOKEN=$(curl -k -s -X POST https://localhost:9443/oauth2/token -d "grant_type=client_credentials" -u "$CONSUMER_KEY:$CONSUMER_SECRET" | grep -o '"access_token":"[^"]*"' | cut -d'"' -f4)
+```
+```console
 loayelnoamani@pop-os:~$ echo "--- v1.0.0 ---"
 curl -k -s -o /dev/null -w "%{http_code}\n" "https://localhost:8243/petstore/1.0.0/pet/findByStatus?status=available" -H "Authorization: Bearer $TOKEN"
 --- v1.0.0 ---
 200
+```
+```console
 loayelnoamani@pop-os:~$ echo "--- v2.0.0 ---"
 curl -k -s -o /dev/null -w "%{http_code}\n" "https://localhost:8243/petstore/2.0.0/pet/findByStatus?status=available" -H "Authorization: Bearer $TOKEN"
 --- v2.0.0 ---
